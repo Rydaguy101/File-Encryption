@@ -50,15 +50,24 @@ def decrypt_file(filename, key):
 # Encrypts all files in current and subdirectories
 def process_all_files(key, action):
     processed = 0
+    excluded_dirs = {".git", "__pycache__"}  # add more if needed
+
     for fname in os.listdir():
-        if fname not in skip and os.path.isfile(fname):
+        if fname in excluded_dirs or fname in skip:
+            continue
+
+        if os.path.isfile(fname):
             if action == "encrypt":
                 encrypt_file(fname, key)
             elif action == "decrypt":
                 decrypt_file(fname, key)
             processed += 1
+
         elif os.path.isdir(fname):
             for root, dirs, files in os.walk(fname):
+                # Filter out excluded dirs during recursion
+                dirs[:] = [d for d in dirs if d not in excluded_dirs]
+
                 for file in files:
                     file_path = os.path.join(root, file)
                     if os.path.basename(file_path) not in skip:
@@ -67,6 +76,7 @@ def process_all_files(key, action):
                         elif action == "decrypt":
                             decrypt_file(file_path, key)
                         processed += 1
+
     if processed == 0:
         print("[INFO] No files found to process.")
     else:
