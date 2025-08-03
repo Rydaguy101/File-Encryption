@@ -1,0 +1,10 @@
+# Ignore the encryption key
+key.txt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS-specific
+.DS_Store
+Thumbs.db
